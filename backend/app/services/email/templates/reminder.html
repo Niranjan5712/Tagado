@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ subject }}</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f6f4f0;color:#14213d;font-family:Segoe UI,Helvetica Neue,Arial,sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f4f0;padding:24px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#ffffff;border:1px solid #e4ddd2;border-radius:10px;overflow:hidden;">
+            <tr>
+              <td style="padding:24px 24px 8px 24px;font-size:15px;line-height:1.55;">
+                {% for paragraph in body_paragraphs %}
+                <p style="margin:0 0 14px 0;">{{ paragraph }}</p>
+                {% endfor %}
+              </td>
+            </tr>
+            {% if msme_note %}
+            <tr>
+              <td style="padding:0 24px 16px 24px;">
+                <p style="margin:0;padding:12px 14px;background:#f3faf7;border:1px solid #cfe6dc;border-radius:8px;font-size:12px;line-height:1.45;color:#245c4a;">
+                  {{ msme_note }}
+                  <br /><span style="color:#6b7c74;">Template, pending CA review.</span>
+                </p>
+              </td>
+            </tr>
+            {% endif %}
+            <tr>
+              <td style="padding:8px 24px 24px 24px;border-top:1px solid #eee7dc;">
+                <p style="margin:0 0 6px 0;font-size:13px;color:#5b6472;">
+                  Outstanding: <strong>{{ outstanding_display }}</strong>
+                  &nbsp;·&nbsp; Due: <strong>{{ due_date_display }}</strong>
+                </p>
+                <p style="margin:0 0 16px 0;">
+                  <a href="{{ client_page_url }}" style="display:inline-block;background:#0f6e56;color:#ffffff;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:14px;font-weight:600;">
+                    View invoice and respond
+                  </a>
+                </p>
+                <p style="margin:0;font-size:12px;color:#7a746a;">
+                  Sent on behalf of {{ business_name }} via Tagado.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

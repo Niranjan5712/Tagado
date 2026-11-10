@@ -1,0 +1,15 @@
+{% for paragraph in body_paragraphs %}
+{{ paragraph }}
+
+{% endfor %}
+{% if msme_note %}
+{{ msme_note }}
+(Template, pending CA review.)
+
+{% endif %}
+Outstanding: {{ outstanding_display }}
+Due: {{ due_date_display }}
+
+View invoice and respond: {{ client_page_url }}
+
+Sent on behalf of {{ business_name }} via Tagado.
