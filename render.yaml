@@ -12,7 +12,7 @@ services:
       - key: CRON_SECRET
         generateValue: true
       - key: DATABASE_URL
-        value: sqlite:////var/data/tagado.db
+        value: sqlite:///./data/tagado.db
       - key: DEMO_EMAIL
         value: demo@tagado.app
       - key: DEMO_PASSWORD
@@ -21,9 +21,6 @@ services:
         value: Priya
       - key: DEMO_BUSINESS_NAME
         value: Pixelcraft Studio
-    disk:
-      name: tagado-data
-      mountPath: /var/data
-      sizeGB: 1
 
-# After first deploy, set APP_URL to https://<your-service>.onrender.com (no trailing slash).
+# Free tier has no persistent disk: SQLite resets when the free instance recycles.
+# After first deploy, set APP_URL to https://<service>.onrender.com (no trailing slash) and redeploy.
