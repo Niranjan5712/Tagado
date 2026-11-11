@@ -1,13 +1,31 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
 import { ApiError, type User, fetchMe, login as apiLogin, logout as apiLogout } from "@/api/client";
 import { AppShell } from "@/components/AppShell";
-import { Dashboard } from "@/routes/Dashboard";
+import { Home } from "@/routes/Home";
 import { InvoiceDetail } from "@/routes/InvoiceDetail";
+import { Invoices } from "@/routes/Invoices";
 import { Login } from "@/routes/Login";
 import { PublicInvoice } from "@/routes/PublicInvoice";
 import { Settings } from "@/routes/Settings";
+
+function Protected({
+  user,
+  onLogout,
+  children,
+}: {
+  user: User | null;
+  onLogout: () => void;
+  children: ReactNode;
+}) {
+  if (!user) return <Navigate to="/login" replace />;
+  return (
+    <AppShell user={user} onLogout={onLogout}>
+      {children}
+    </AppShell>
+  );
+}
 
 export function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -74,37 +92,35 @@ export function App() {
       <Route
         path="/"
         element={
-          user ? (
-            <AppShell user={user} onLogout={() => void handleLogout()}>
-              <Dashboard />
-            </AppShell>
-          ) : (
-            <Navigate to="/login" replace />
-          )
+          <Protected user={user} onLogout={() => void handleLogout()}>
+            <Home />
+          </Protected>
+        }
+      />
+      <Route
+        path="/invoices"
+        element={
+          <Protected user={user} onLogout={() => void handleLogout()}>
+            <Invoices />
+          </Protected>
         }
       />
       <Route
         path="/invoices/:id"
         element={
-          user ? (
-            <AppShell user={user} onLogout={() => void handleLogout()}>
-              <InvoiceDetail />
-            </AppShell>
-          ) : (
-            <Navigate to="/login" replace />
-          )
+          <Protected user={user} onLogout={() => void handleLogout()}>
+            <InvoiceDetail />
+          </Protected>
         }
       />
+      <Route path="/settings" element={<Navigate to="/settings/branding" replace />} />
+      <Route path="/settings/business" element={<Navigate to="/settings/branding" replace />} />
       <Route
-        path="/settings"
+        path="/settings/:section"
         element={
-          user ? (
-            <AppShell user={user} onLogout={() => void handleLogout()}>
-              <Settings />
-            </AppShell>
-          ) : (
-            <Navigate to="/login" replace />
-          )
+          <Protected user={user} onLogout={() => void handleLogout()}>
+            <Settings />
+          </Protected>
         }
       />
       <Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />

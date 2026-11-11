@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: tagado
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: APP_URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: CRON_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:////var/data/tagado.db
+      - key: DEMO_EMAIL
+        value: demo@tagado.app
+      - key: DEMO_PASSWORD
+        value: tagado-demo-2026
+      - key: DEMO_OWNER_NAME
+        value: Priya
+      - key: DEMO_BUSINESS_NAME
+        value: Pixelcraft Studio
+    disk:
+      name: tagado-data
+      mountPath: /var/data
+      sizeGB: 1
+
+# After first deploy, set APP_URL to https://<your-service>.onrender.com (no trailing slash).

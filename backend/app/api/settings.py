@@ -24,6 +24,13 @@ class SettingsPatch(BaseModel):
     ifsc: str | None = None
     upi_id: str | None = None
     udyam_number: str | None = None
+    send_hour_ist: int | None = Field(default=None, ge=9, le=19)
+    send_minute_ist: int | None = Field(default=None, ge=0, le=59)
+    logo_data_url: str | None = None
+    favicon_data_url: str | None = None
+    accent_color: str | None = Field(default=None, min_length=4, max_length=32)
+    retention_days_paid: int | None = Field(default=None, ge=30, le=3650)
+    retention_keep_audit: bool | None = None
 
 
 @router.get("/settings")

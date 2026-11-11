@@ -42,6 +42,11 @@ class Workspace(Base):
     mcp_token: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
     send_hour_ist: Mapped[int] = mapped_column(Integer, nullable=False, default=10)
     send_minute_ist: Mapped[int] = mapped_column(Integer, nullable=False, default=30)
+    logo_data_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    favicon_data_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    accent_color: Mapped[str] = mapped_column(String(32), nullable=False, default="#0f6e56")
+    retention_days_paid: Mapped[int] = mapped_column(Integer, nullable=False, default=365)
+    retention_keep_audit: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -62,6 +67,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(320), nullable=False, index=True)
     password_hash: Mapped[str] = mapped_column(Text, nullable=False)
     name: Mapped[str] = mapped_column(String(200), nullable=False)
+    role: Mapped[str] = mapped_column(String(32), nullable=False, default="owner")
     workspace_id: Mapped[str] = mapped_column(
         String(36),
         ForeignKey("workspaces.id", ondelete="CASCADE"),

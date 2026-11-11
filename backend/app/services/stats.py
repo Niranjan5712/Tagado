@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.db.models import Client, Invoice
 from app.services.plans import outstanding_paise
@@ -56,7 +56,13 @@ def compute_client_stats(db: Session, client_id: str, *, today: date | None = No
 
 def workspace_dashboard_totals(db: Session, workspace_id: str, *, today: date | None = None) -> dict:
     today_value = today or today_ist()
-    invoices = list(db.scalars(select(Invoice).where(Invoice.workspace_id == workspace_id)))
+    invoices = list(
+        db.scalars(
+            select(Invoice)
+            .where(Invoice.workspace_id == workspace_id)
+            .options(selectinload(Invoice.messages))
+        )
+    )
 
     openish = [inv for inv in invoices if inv.status in {"open", "promised", "payment_reported", "issue_raised"}]
     outstanding_paise_total = sum(outstanding_paise(inv) for inv in openish)
@@ -76,12 +82,42 @@ def workspace_dashboard_totals(db: Session, workspace_id: str, *, today: date | 
             if age_days <= 30:
                 collected += inv.amount_paid_paise
 
+    week_end = today_value + timedelta(days=7)
+    due_soon = [
+        inv
+        for inv in invoices
+        if inv.status in {"open", "promised"}
+        and today_value <= inv.due_date <= week_end
+    ]
+    promised = [inv for inv in invoices if inv.status == "promised"]
+    open_issues = [inv for inv in invoices if inv.status == "issue_raised"]
+    payment_reported = [inv for inv in invoices if inv.status == "payment_reported"]
+    awaiting_approval = [
+        inv
+        for inv in invoices
+        if inv.plan_status == "draft" and inv.status not in {"paid", "cancelled"}
+    ]
+    held_reminders = [
+        inv
+        for inv in invoices
+        if inv.status in {"open", "promised", "payment_reported", "issue_raised"}
+        and any(m.status == "held" for m in (inv.messages or []))
+    ]
+
     return {
         "outstanding_paise": outstanding_paise_total,
         "outstanding_count": len(openish),
         "overdue_paise": overdue_paise,
         "overdue_count": len(overdue),
         "collected_30d_paise": collected,
+        "due_soon_paise": sum(outstanding_paise(inv) for inv in due_soon),
+        "due_soon_count": len(due_soon),
+        "promised_paise": sum(outstanding_paise(inv) for inv in promised),
+        "promised_count": len(promised),
+        "open_issues_count": len(open_issues),
+        "payment_reported_count": len(payment_reported),
+        "awaiting_approval_count": len(awaiting_approval),
+        "held_reminders_count": len(held_reminders),
     }
 
 

@@ -21,6 +21,11 @@ def serialize_workspace_settings(workspace: Workspace, settings: Settings | None
         "udyam_number": workspace.udyam_number,
         "send_hour_ist": workspace.send_hour_ist,
         "send_minute_ist": workspace.send_minute_ist,
+        "logo_data_url": workspace.logo_data_url,
+        "favicon_data_url": workspace.favicon_data_url,
+        "accent_color": workspace.accent_color or "#0f6e56",
+        "retention_days_paid": workspace.retention_days_paid,
+        "retention_keep_audit": workspace.retention_keep_audit,
         "is_demo": workspace.is_demo,
         "claude_connection_url": mcp_url,
         "msme_note_preview": (

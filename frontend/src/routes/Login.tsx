@@ -27,8 +27,16 @@ export function Login({ onSuccess, login }: LoginProps) {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-6 py-12">
-      <p className="text-sm font-medium uppercase tracking-[0.18em] text-[var(--accent)]">Tagado</p>
-      <h1 className="mt-3 text-3xl font-semibold tracking-tight">Sign in</h1>
+      <div className="flex items-center gap-3">
+        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--accent)] text-sm font-bold text-white">
+          Tg
+        </span>
+        <div>
+          <p className="text-lg font-semibold tracking-tight">Tagado</p>
+          <p className="text-xs text-slate-500">Follow-ups that stay live</p>
+        </div>
+      </div>
+      <h1 className="mt-8 text-3xl font-semibold tracking-tight">Sign in</h1>
       <p className="mt-2 text-sm text-slate-600">
         See who owes you money, approve follow-ups, and confirm payments in one place.
       </p>

@@ -54,6 +54,7 @@ def ensure_demo_workspace(db: Session, settings: Settings) -> Workspace:
     owner = User(
         email=settings.demo_email,
         password_hash=hash_password(settings.demo_password),
+        role="owner",
         name=settings.demo_owner_name,
         workspace_id=workspace.id,
     )

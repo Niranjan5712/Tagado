@@ -78,4 +78,33 @@ python scripts/check_no_ai.py
 - [x] Phase 3 — outbox send + cron ✅
 - [x] Phase 4 — owner app (dashboard / invoice / settings) ✅
 - [x] Phase 5 — client payment page ✅
-- [ ] Phase 6 — deploy + E2E
+- [x] Phase 6 — deploy + Claude MCP connect ✅
+
+## Live deploy (Render)
+
+Repo already includes `Dockerfile` + `render.yaml`.
+
+1. Push `main` to GitHub (this repo).
+2. Open the Blueprint deploy link (replace with your fork if needed):  
+   https://render.com/deploy?repo=https://github.com/Niranjan5712/Tagado
+3. Create the **tagado** web service. After the first URL exists, set env `APP_URL` to `https://<service>.onrender.com` (no trailing slash) and redeploy.
+4. Open the live site, sign in with the demo login below, go to **Settings → Connect Claude**, copy the private link.
+
+### Demo login
+
+- Email: `demo@tagado.app`
+- Password: `tagado-demo-2026`
+
+### Connect Tagado in Claude.ai
+
+1. Open [Claude.ai](https://claude.ai) → **Settings** → **Connectors**.
+2. **Add custom connector**.
+3. Name: `Tagado`.
+4. URL: paste the **Private Claude connection link** from Tagado (**Settings → Connect Claude**).  
+   Keep the trailing slash before `?key=` — example shape:  
+   `https://YOUR-APP.onrender.com/mcp/?key=YOUR_TOKEN`
+5. Save → **Connect**.
+6. In a new chat ask: `What can Tagado do?` then try:  
+   `Track my invoice to Kalpataru Retail for ₹50,000 due 15 Dec.`
+
+Claude cannot use `localhost`. The connector URL must be a public `https://` address.

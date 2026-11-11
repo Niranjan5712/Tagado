@@ -36,7 +36,21 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  role: string;
   workspace_id: string;
+}
+
+export interface WorkspaceUser {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+}
+
+export interface RoleInfo {
+  id: string;
+  label: string;
+  description: string;
 }
 
 export interface DashboardTotals {
@@ -44,6 +58,14 @@ export interface DashboardTotals {
   outstanding_count: number;
   overdue_display: string;
   overdue_count: number;
+  due_soon_display: string;
+  due_soon_count: number;
+  promised_display: string;
+  promised_count: number;
+  open_issues_count: number;
+  payment_reported_count: number;
+  awaiting_approval_count: number;
+  held_reminders_count: number;
   needs_attention_count: number;
   collected_30d_display: string;
 }
@@ -141,6 +163,13 @@ export interface WorkspaceSettings {
   ifsc: string | null;
   upi_id: string | null;
   udyam_number: string | null;
+  send_hour_ist: number;
+  send_minute_ist: number;
+  logo_data_url: string | null;
+  favicon_data_url: string | null;
+  accent_color: string;
+  retention_days_paid: number;
+  retention_keep_audit: boolean;
   is_demo: boolean;
   claude_connection_url: string;
   msme_note_preview: string | null;
@@ -241,4 +270,31 @@ export function regenerateClaudeLink(): Promise<WorkspaceSettings> {
 
 export function resetSampleData(): Promise<{ status: string; summary: string }> {
   return request("/api/demo/reset", { method: "POST" });
+}
+
+export function fetchUsers(): Promise<{ users: WorkspaceUser[]; roles: RoleInfo[] }> {
+  return request("/api/users");
+}
+
+export function createUser(payload: {
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+}): Promise<WorkspaceUser> {
+  return request("/api/users", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateUserRole(userId: string, role: string): Promise<WorkspaceUser> {
+  return request(`/api/users/${userId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ role }),
+  });
+}
+
+export function removeUser(userId: string): Promise<{ status: string }> {
+  return request(`/api/users/${userId}`, { method: "DELETE" });
 }

@@ -56,8 +56,23 @@ engine = create_db_engine()
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
 
 
+def _ensure_column(table: str, column: str, ddl_type: str) -> None:
+    with engine.begin() as conn:
+        rows = conn.exec_driver_sql(f"PRAGMA table_info({table})").fetchall()
+        existing = {row[1] for row in rows}
+        if column not in existing:
+            conn.exec_driver_sql(f"ALTER TABLE {table} ADD COLUMN {column} {ddl_type}")
+
+
 def init_db() -> None:
     Base.metadata.create_all(bind=engine)
+    if engine.url.get_backend_name() == "sqlite":
+        _ensure_column("workspaces", "logo_data_url", "TEXT")
+        _ensure_column("workspaces", "favicon_data_url", "TEXT")
+        _ensure_column("workspaces", "accent_color", "VARCHAR(32) DEFAULT '#0f6e56'")
+        _ensure_column("workspaces", "retention_days_paid", "INTEGER DEFAULT 365")
+        _ensure_column("workspaces", "retention_keep_audit", "BOOLEAN DEFAULT 1")
+        _ensure_column("users", "role", "VARCHAR(32) DEFAULT 'owner'")
 
 
 def get_db() -> Generator[Session, None, None]:

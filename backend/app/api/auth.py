@@ -22,7 +22,18 @@ class UserResponse(BaseModel):
     id: str
     email: str
     name: str
+    role: str
     workspace_id: str
+
+
+def _user_response(user: User) -> UserResponse:
+    return UserResponse(
+        id=user.id,
+        email=user.email,
+        name=user.name,
+        role=getattr(user, "role", None) or "owner",
+        workspace_id=user.workspace_id,
+    )
 
 
 @router.post("/login", response_model=UserResponse)
@@ -33,12 +44,7 @@ def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
     request.session["user_id"] = user.id
     request.session["workspace_id"] = user.workspace_id
-    return UserResponse(
-        id=user.id,
-        email=user.email,
-        name=user.name,
-        workspace_id=user.workspace_id,
-    )
+    return _user_response(user)
 
 
 @router.post("/logout")
@@ -49,9 +55,4 @@ def logout(request: Request) -> dict[str, str]:
 
 @router.get("/me", response_model=UserResponse)
 def me(user: User = Depends(get_current_user)) -> UserResponse:
-    return UserResponse(
-        id=user.id,
-        email=user.email,
-        name=user.name,
-        workspace_id=user.workspace_id,
-    )
+    return _user_response(user)
